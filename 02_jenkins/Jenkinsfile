@@ -62,7 +62,7 @@ pipeline {
                     echo "Running new container..."
                     docker run -d \
                         --name webapp_cicd \
-                        -p 3000:3000 \
+                        -p 3003:3003 \
                         --restart unless-stopped \
                         $DOCKER_IMAGE:latest
                '''
