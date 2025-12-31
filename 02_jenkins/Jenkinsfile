@@ -49,21 +49,25 @@ pipeline {
                 '''
             }
         }
-      stage('Deploy Container') {
-        steps {
-        sh '''
-            echo "Stopping and removing old container if exists..."
-            sudo docker rm -f webapp_cicd || true
+        stage('Deploy Container') {
+             steps {
+                sh '''
+                    echo "Stopping old container if exists..."
+                    docker stop webapp_cicd || true
+                    docker rm webapp_cicd || true
 
-            echo "Pulling latest image..."
-            sudo docker pull admincbo/webapp-cicd:latest
+                    echo "Pulling new image..."
+                    docker pull $DOCKER_IMAGE:latest
 
-            echo "Running new container..."
-            sudo docker run -d --name webapp_cicd -p 3003:3003 --restart unless-stopped admincbo/webapp-cicd:latest
-        '''
-        }
-     }
-
+                    echo "Running new container..."
+                    docker run -d \
+                        --name webapp_cicd \
+                        -p 3003:3003 \
+                        --restart unless-stopped \
+                        $DOCKER_IMAGE:latest
+               '''
+          }
+       }
     }
 
     post {
